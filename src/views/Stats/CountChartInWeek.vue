@@ -1,18 +1,26 @@
 <template>
   <div>
-    <div style="float: left; width: 660px; height: 350px;margin-left: 25px">
+    <div style="float: left; width: 100%; height: 350px">
       <div style="position: relative; float: left; margin-bottom: 0px">
-        <el-button icon="el-icon-arrow-left" size="mini" type="primary" style="margin-left: 5px" :disabled="weekIndex <= -10" @click="preWeek()">上一周
+        <el-button icon="el-icon-arrow-left" size="mini" type="primary" style="margin-left: 20px" :disabled="weekIndex <= -10" @click="preWeek()">上一周
         </el-button>
-        <span style="margin-left: 20px">{{ weekDayScopeInfo }}</span>
-        <el-button type="primary" size="mini" style="margin-left: 20px" :disabled="weekIndex >= 0" @click="nextWeek()">
+        <span style="margin-left: 5px">{{ weekDayScopeInfo }}</span>
+        <span style="margin-left: 5px">{{ totalTimes }}次</span>
+        <span style="margin-left: 5px">{{ total }}小时</span>
+        <el-button type="primary" size="mini" style="margin-left: 5px" :disabled="weekIndex>=0" @click="nextWeek()">
           下一周
           <i class="el-icon-arrow-right el-icon--right"></i>
         </el-button>
-        <span style="margin-left: 125px">学习{{ totalTimes }}次</span>
-        <span style="margin-left: 50px">{{ total }}小时</span>
       </div>
-      <div id="learnWeekCountId" style="float: left; width: 100%; height: 100%; margin-top: -5px"></div>
+      <div id="weekCountId" style="position: relative;float: left; width: 100%; height: 100%; margin-top: -5px"></div>
+      <!-- <div style="position: relative;float: left; margin-top: -100px">
+        <el-button icon="el-icon-arrow-left" size="mini" type="primary" style="margin-left: 30px" :disabled="weekIndex <= -10" @click="preWeek()">上一周
+        </el-button>
+        <el-button type="primary" size="mini" style="margin-left: 130px" :disabled="weekIndex>=0" @click="nextWeek()">
+          下一周
+          <i class="el-icon-arrow-right el-icon--right"></i>
+        </el-button>
+      </div> -->
     </div>
   </div>
 </template>
@@ -30,6 +38,7 @@ export default {
   name: "",
   data() {
     return {
+      menuId: 0,
       monthChart: {},
       optionData: {
         daysInWeek: ["一", "二", "三", "四", "五", "六", "日"],
@@ -44,11 +53,15 @@ export default {
     };
   },
   methods: {
-    init() {
-      this.countByMonth();
+    init(menuId) {
+      if (!menuId || menuId == 0) {
+        return;
+      }
+      this.menuId = menuId;
+      this.countByWeek();
     },
-    countByMonth() {
-      countLearnInOneWeek(this.weekIndex, this.learnContent)
+    countByWeek() {
+      countLearnInOneWeek(this.weekIndex, this.learnContent, this.menuId)
         .then((res) => {
           if (!res || !res.data) {
             this.$message.warning("查询不到月度数据");
@@ -66,15 +79,15 @@ export default {
     },
     preWeek() {
       this.weekIndex = this.weekIndex - 1;
-      this.countByMonth();
+      this.countByWeek();
     },
     nextWeek() {
       this.weekIndex = this.weekIndex + 1;
-      this.countByMonth();
+      this.countByWeek();
     },
     drawMonths(optionData) {
       this.monthChart = this.$echarts.init(
-        document.getElementById("learnWeekCountId")
+        document.getElementById("weekCountId")
       );
       let optionTrend = {
         color: "#c23531",
@@ -85,7 +98,7 @@ export default {
         tooltip: {
           trigger: "axis",
           show: true,
-          transitionDuration:0,//echart防止tooltip的抖动
+          transitionDuration: 0, //echart防止tooltip的抖动
           axisPointer: {
             // type: "shadow"
           },
@@ -177,3 +190,8 @@ export default {
   list-style: none;
 }
 </style>
+
+
+
+// WEBPACK FOOTER //
+// src/views/Stats/CountChartInWeek.vue

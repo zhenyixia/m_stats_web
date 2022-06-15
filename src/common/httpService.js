@@ -1,7 +1,7 @@
 import axios from 'axios'
 import Vue from 'vue'
 
-let baseURL = 'http://localhost:8081';
+let baseURL = 'http://localhost:8090';
 axios.defaults.baseURL = baseURL;
 // Vue.prototype.$http = axios
 // let axiosConfig = {
@@ -75,18 +75,64 @@ export const countLearnInOneMonth = (params) => {
 export const countLearnInOneYear = (params) => {
   return axios.post('learn/countInOneYear', params).then(res => res.data)
 }
-export const countLearnAllYears = () => {
-  return axios.get('learn/countAllYears').then(res => res.data)
+export const countLearnAllYears = (params) => {
+  return axios.post('learn/countAllYears', params).then(res => res.data)
 }
 // 获取已有的学习内容
-export const getLearnContent = () => {
-  return axios.get('learn/getExistedContent').then(res => res.data)
+export const getAddressContent = (param) => {
+  return axios.get('learn/getAddressContent?menuId=' + param).then(res => res.data)
 }
 
-export const countLearnInOneWeek = (param1,param2) => {
-  return axios.get('learn/countWeek?weekIndex=' + param1 + '&learnContent=' + param2).then(res => res.data)
+export const countLearnInOneWeek = (param1, param2, param3) => {
+  return axios.get('learn/countWeek?weekIndex=' + param1 + '&learnContent=' + param2 + '&menuId=' + param3).then(res => res.data)
 }
 
 export const addLearnData = (params) => {
   return axios.post('learn/add', params).then(res => res.data)
 }
+
+
+// 以下为菜单相关接口
+
+export const getMenuTableData = (params) => {
+  return axios.post('menu/getMenuTableData', params).then(res => res.data)
+}
+
+export const getExistsMenus = () => {
+  return axios.post('menu/getAll').then(res => res.data)
+}
+
+export const createMenu = (params) => {
+  return axios.post('menu/add', params).then(res => res.data)
+}
+export const deleteMenu = (params) => {
+  return axios.post('menu/delete?id=' + params).then(res => res.data)
+}
+export const deleteMenus = (params) => {
+  return axios.post('menu/batchDelete?ids=' + params).then(res => res.data)
+}
+
+export const modifyMenu = (params) => {
+  return axios.post('menu/modify', params).then(res => res.data)
+}
+
+export const modifySubMenu = (params) => {
+  return axios.post('menu/modifySub', params).then(res => res.data)
+}
+
+export const getLatestSubMenus = (params) => {
+  return axios.post('menu/getLatestSubMenus?isDetailView=' + params).then(res => res.data)
+}
+
+
+// 以下为通用统计接口
+
+
+export const getStatsList = (params) => {
+  return axios.post('stats/getList', params).then(res => res.data)
+}
+
+
+
+// WEBPACK FOOTER //
+// ./src/common/httpService.js

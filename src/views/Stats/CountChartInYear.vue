@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="统计一年(所有)" :visible.sync="modalShow" top="1%" width="700px" height="500px" :before-close="modalClose" class="elDialogBody">
+    <el-dialog title="统计一年" :visible.sync="modalShow" top="1%" width="700px" height="500px" :before-close="modalClose" class="elDialogBody">
       <div>
         <div style="position:relative;margin-bottom:0px;">
           <el-button icon="el-icon-arrow-left" size="mini" type="primary" :disabled="curYear<=2021" @click="preYear()">前一年</el-button>
@@ -10,7 +10,7 @@
             <i class="el-icon-arrow-right el-icon--right"></i>
           </el-button>
           <span style="margin-left:100px;">共{{total}}小时</span>
-          <span style="margin-left:100px;">共运动{{totalTimes}}次</span>
+          <span style="margin-left:100px;">共{{totalTimes}}次</span>
         </div>
         <div id="yearCountId" style="width:650px;height:300px;"></div>
         <div style="margin-top:20px;">
@@ -33,6 +33,7 @@ export default {
       optionData: { daysInMonth: [], valueList: [] },
       queryParams: {
         year: 0,
+        menuId: 0,
       },
       total: 0, // 本年运动总里程
       totalTimes: 0, // 本年总运动总次数
@@ -41,11 +42,15 @@ export default {
     };
   },
   methods: {
-    init() {
+    init(menuId) {
+       if (!menuId || menuId == 0) {
+        return;
+      }
       this.modalShow = true;
       let date = new Date();
       this.realCurYear = this.curYear = date.getFullYear();
       this.queryParams.year = this.curYear;
+      this.queryParams.menuId = menuId;
 
       this.countInYear();
     },
@@ -182,3 +187,7 @@ export default {
   list-style: none;
 }
 </style>
+
+
+// WEBPACK FOOTER //
+// src/views/Stats/CountChartInYear.vue

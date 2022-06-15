@@ -50,6 +50,12 @@
 import { deepClone } from "@/common/util";
 import { addRunData, getRunAddressed } from "@/common/httpService";
 export default {
+  props: {
+    latestAddress: {
+      type: String,
+      default: "西安市高新区东滩社区",
+    },
+  },
   data() {
     return {
       modalShow: false,
@@ -73,7 +79,7 @@ export default {
           runDate: dateStr,
           kilometer: null,
           runSecond: null,
-          address: this.runAddress,
+          address: this.latestAddress,
         });
       }
     },
@@ -180,6 +186,7 @@ export default {
           this.$message.error(error.response.data.message);
         })
         .finally(() => {
+          this.$parent.getListFunc();
           this.$parent.$refs["runWeekCountRef"].init();
           this.$parent.$refs["runMonthCount"].init();
         });
@@ -207,3 +214,7 @@ export default {
   padding: 8px 20px;
 }
 </style>
+
+
+// WEBPACK FOOTER //
+// src/views/RunCount/EnterDateDialog.vue

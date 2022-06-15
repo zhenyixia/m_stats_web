@@ -1,97 +1,105 @@
 <template>
   <div>
-    <div style="float: left; width: 650px; height: 250px; margin-left: 25px">
-      <div style="position:relative;float: left; margin-bottom: 0px">
-        <el-button icon="el-icon-arrow-left" size="mini" type="primary" style="margin-left: 0px" :disabled="curYearMonth <= 202103"
-          @click="preMonth()">前一月</el-button>
-        <span style="margin-left: 20px">{{ curYearMonthInfo }}</span>
-        <el-button type="primary" size="mini" style="margin-left: 20px" :disabled="curYearMonth >= realCurYearMonth" @click="nextMonth()">
-          后一月
-          <i class="el-icon-arrow-right el-icon--right"></i>
+    <div :key="'div'+weekCountId" style="float: left; width: 100%; height: 250px;margin-bottom: 0px">
+      <div style="position: relative; float: left; width: 100%;margin-bottom: 0px">
+        <el-button icon="el-icon-back" size="mini" type="primary" style="margin-left: 0px" :disabled="weekIndex <= -10" @click="preWeek()">
+          <!-- 上周 -->
         </el-button>
-        <span style="margin-left: 150px">学习{{ totalTimes }}次</span>
-        <span style="margin-left: 50px">{{ total }}小时</span>
+        <span style="margin-left: 5px">{{title}}</span>
+        <span style="margin-left: 5px">{{ totalTimes }}次</span>
+        <span style="margin-left: 5px">{{ total }}</span>
+        <el-button type="primary" size="mini" style="margin-left: 5px" :disabled="weekIndex>=0" @click="nextWeek()">
+          <!-- 下周 -->
+          <i class="el-icon-right"></i>
+        </el-button>
       </div>
-      <div id="learnMonthCountId" style="float:left; width:100%; height:100%; margin-top:-5px; margin-right:15px; "></div>
+      <div :id="weekCountId" style="position: relative;float: left; width: 100%; height: 100%; margin-top: 0px"></div>
+
     </div>
   </div>
 </template>
 <script>
 import echarts from "echarts";
 import { deepClone } from "@/common/util";
-import { countLearnInOneMonth } from "@/common/httpService";
+import { countLearnInOneWeek, countRunInOneWeek } from "@/common/httpService";
 export default {
-  name: "",
   props: {
-    learnContent: String,
-    required: true,
+    weekCountId: "",
+    title: "",
+    menuId: "",
   },
+  name: "",
   data() {
     return {
       monthChart: {},
-      optionData: { daysInMonth: [], valueList: [] },
-      queryParams: {
-        year: 0,
-        month: 0,
-        learnContent: "",
+      optionData: {
+        daysInWeek: ["一", "二", "三", "四", "五", "六", "日"],
+        valueInWeek: [],
       },
-      total: 0, // 本月运动总里程
+      weekIndex: 0,
+      learnContent: "",
+      weekDayScopeInfo: null,
+      total: "0 h/km", // 本月运动总里程
       totalTimes: 0, // 本月总运动总次数
       curYearMonth: 0, //当前月，随着切换会变化
       realCurYearMonth: 0, // 真正的当前月，不会随着切换变化
-      curYearMonthInfo: null, // 当前年月信息，如：2021年2月
     };
   },
   methods: {
-    init() {
-      let date = new Date();
-      this.setDateInfo(date);
-      this.realCurYearMonth = this.curYearMonth;
-      this.queryParams.learnContent = this.learnContent;
-
-      this.countByMonth();
-    },
-    countByMonth() {
-      countLearnInOneMonth(this.queryParams)
+    countByWeek() {
+      this.learnContent = this.$root.isDetailView ? this.title : "";
+      countLearnInOneWeek(this.weekIndex, this.learnContent, this.menuId)
         .then((res) => {
           if (!res || !res.data) {
             this.$message.warning("查询不到月度数据");
           }
           if (res.status == 200 && res.data) {
-            this.optionData.daysInMonth = res.data.units;
-            this.optionData.valueList = res.data.valueList;
+            this.optionData.valueInWeek = res.data.valueList;
+            this.weekDayScopeInfo = res.data.weekDayScope;
             this.totalTimes = res.data.totalTimes;
-            this.total = res.data.total;
+            this.total = res.data.total + " 小时";
           }
         })
         .finally(() => {
           this.drawMonths(this.optionData);
         });
     },
-    preMonth() {
-      let curDate = new Date(this.queryParams.year, this.queryParams.month - 1);
-      curDate.setMonth(curDate.getMonth() - 1);
-      this.setDateInfo(curDate);
-      this.countByMonth();
+    countRunByWeek() {
+      countRunInOneWeek(this.weekIndex)
+        .then((res) => {
+          if (!res || !res.data) {
+            this.$message.warning("查询不到月度数据");
+          }
+          if (res.status == 200 && res.data) {
+            this.optionData.valueInWeek = res.data.valueList;
+            this.weekDayScopeInfo = res.data.weekDayScope;
+            this.totalTimes = res.data.totalTimes;
+            this.total = res.data.total + " 公里";
+          }
+        })
+        .finally(() => {
+          this.drawMonths(this.optionData);
+        });
     },
-    nextMonth() {
-      let curDate = new Date(this.queryParams.year, this.queryParams.month - 1);
-      curDate.setMonth(curDate.getMonth() + 1);
-      this.setDateInfo(curDate);
-      this.countByMonth();
+    preWeek() {
+      this.weekIndex = this.weekIndex - 1;
+      if (this.title != "跑步统计") {
+        this.countByWeek();
+      } else {
+        this.countRunByWeek();
+      }
     },
-    setDateInfo(date) {
-      let curYear = date.getFullYear();
-      let curMonth = date.getMonth() + 1;
-
-      this.queryParams.year = curYear;
-      this.queryParams.month = curMonth;
-      this.curYearMonth = curYear * 100 + curMonth;
-      this.curYearMonthInfo = curYear + "年" + curMonth + "月";
+    nextWeek() {
+      this.weekIndex = this.weekIndex + 1;
+      if (this.title != "跑步统计") {
+        this.countByWeek();
+      } else {
+        this.countRunByWeek();
+      }
     },
     drawMonths(optionData) {
       this.monthChart = this.$echarts.init(
-        document.getElementById("learnMonthCountId")
+        document.getElementById(this.weekCountId)
       );
       let optionTrend = {
         color: "#c23531",
@@ -101,8 +109,6 @@ export default {
         // },
         tooltip: {
           trigger: "axis",
-          show: true,
-          transitionDuration: 0, //echart防止tooltip的抖动
           axisPointer: {
             // type: "shadow"
           },
@@ -125,7 +131,7 @@ export default {
         xAxis: {
           // name: "每天",
           type: "category",
-          data: optionData.daysInMonth,
+          data: optionData.daysInWeek,
         },
         yAxis: {
           type: "value",
@@ -151,7 +157,7 @@ export default {
           {
             // name: optionData.total,
             type: "bar",
-            data: optionData.valueList,
+            data: optionData.valueInWeek,
             stack: "stock",
             barMaxWidth: 20,
             label: {
@@ -183,7 +189,11 @@ export default {
     },
   },
   mounted() {
-    this.init();
+    if (this.title != "跑步统计") {
+      this.countByWeek();
+    } else {
+      this.countRunByWeek();
+    }
   },
 };
 </script>
@@ -194,3 +204,7 @@ export default {
   list-style: none;
 }
 </style>
+
+
+// WEBPACK FOOTER //
+// src/components/statsChartInWeek.vue

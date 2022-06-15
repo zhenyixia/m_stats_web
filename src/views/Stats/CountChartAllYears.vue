@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog title="统计所有年（所有）" :visible.sync="modalShow" top="1%" width="700px" height="500px" :before-close="modalClose" class="elDialogBody">
+    <el-dialog title="统计所有年" :visible.sync="modalShow" top="1%" width="700px" height="500px" :before-close="modalClose" class="elDialogBody">
       <div>
         <div id="allYearsCountId" style="width:650px;height:300px;"></div>
         <div style="margin-top:20px;">
@@ -20,6 +20,13 @@ export default {
     return {
       modalShow: false,
       yearChart: {},
+       queryParams: {
+        year: 0,
+        menuId: 0,
+      },
+      
+      
+      
       optionData: { daysInMonth: [], kmInMonth: [], optionData: 0 },
     };
   },
@@ -28,9 +35,13 @@ export default {
       this.modalShow = false;
       this.optionData = [];
     },
-    init() {
+    init(menuId) {
+       if (!menuId || menuId == 0) {
+        return;
+      }
+      this.queryParams.menuId = menuId;
       this.modalShow = true;
-      countLearnAllYears()
+      countLearnAllYears(this.queryParams)
         .then((res) => {
           if (!res || !res.data) {
             this.$message.warning("查询不到年度数据");
@@ -135,3 +146,8 @@ export default {
   list-style: none;
 }
 </style>
+
+
+
+// WEBPACK FOOTER //
+// src/views/Stats/CountChartAllYears.vue

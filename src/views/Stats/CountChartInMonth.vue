@@ -2,18 +2,19 @@
   <div>
     <div style="float:left;width:100%; height:350px;">
       <div style="position:relative;float:left;margin-bottom:0px;">
-         <el-button icon="el-icon-arrow-left" size="mini" type="primary" style="margin-left:30px;" :disabled="curYearMonth<=202101" @click="preMonth()">
+        <el-button icon="el-icon-arrow-left" size="mini" type="primary" style="margin-left:30px;" :disabled="curYearMonth<=202101"
+          @click="preMonth()">
           前一月</el-button>
         <span style="margin-left:20px;">{{curYearMonthInfo}}</span>
         <span style="margin-left:25px;">{{totalTimes}}次</span>
-        <span style="margin-left:25px;">{{total}}公里</span>
-         <el-button type="primary" size="mini" style="margin-left: 120px;" :disabled="curYearMonth >= realCurYearMonth" @click="nextMonth()">
+        <span style="margin-left:25px;">{{total}}小时</span>
+        <el-button type="primary" size="mini" style="margin-left: 120px;" :disabled="curYearMonth >= realCurYearMonth" @click="nextMonth()">
           后一月
           <i class="el-icon-arrow-right el-icon--right"></i>
         </el-button>
       </div>
-       <div id="monthCountId" style="float:left;width:100%;height:100%;margin-top:-5px;"></div>
-       <!--<div style="position: relative;float: left; margin-top: -100px">
+      <div id="monthCountId" style="float:left;width:100%;height:100%;margin-top:-5px;"></div>
+      <!--<div style="position: relative;float: left; margin-top: -100px">
        
        
       </div> -->
@@ -23,16 +24,18 @@
 <script>
 import echarts from "echarts";
 import { deepClone } from "@/common/util";
-import { countRunInOneMonth } from "@/common/httpService";
+import { countLearnInOneMonth } from "@/common/httpService";
 export default {
   name: "",
   data() {
     return {
       monthChart: {},
-      optionData: { daysInMonth: [], kmInMonth: [] },
+      optionData: { daysInMonth: [], valueList: [] },
       queryParams: {
         year: 0,
         month: 0,
+        menuId: 0,
+        learnContent: "",
       },
       total: 0, // 本月运动总里程
       totalTimes: 0, // 本月总运动总次数
@@ -42,22 +45,27 @@ export default {
     };
   },
   methods: {
-    init() {
+    init(menuId) {
+      if (!menuId || menuId == 0) {
+        return;
+      }
       let date = new Date();
       this.setDateInfo(date);
       this.realCurYearMonth = this.curYearMonth;
+      this.queryParams.learnContent = this.learnContent;
+      this.queryParams.menuId = menuId;
 
       this.countByMonth();
     },
     countByMonth() {
-      countRunInOneMonth(this.queryParams)
+      countLearnInOneMonth(this.queryParams)
         .then((res) => {
           if (!res || !res.data) {
             this.$message.warning("查询不到月度数据");
           }
           if (res.status == 200 && res.data) {
             this.optionData.daysInMonth = res.data.units;
-            this.optionData.kmInMonth = res.data.valueList;
+            this.optionData.valueList = res.data.valueList;
             this.totalTimes = res.data.totalTimes;
             this.total = res.data.total;
           }
@@ -99,6 +107,8 @@ export default {
         // },
         tooltip: {
           trigger: "axis",
+          show: true,
+          transitionDuration: 0, //echart防止tooltip的抖动
           axisPointer: {
             // type: "shadow"
           },
@@ -147,7 +157,7 @@ export default {
           {
             // name: optionData.total,
             type: "bar",
-            data: optionData.kmInMonth,
+            data: optionData.valueList,
             stack: "stock",
             barMaxWidth: 20,
             label: {
@@ -193,4 +203,4 @@ export default {
 
 
 // WEBPACK FOOTER //
-// src/views/RunCount/CountChartInMonth.vue
+// src/views/Stats/CountChartInMonth.vue

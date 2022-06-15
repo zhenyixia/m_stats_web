@@ -80,3 +80,7 @@ export default {
   }
 };
 </script>
+
+
+// WEBPACK FOOTER //
+// src/views/userView.vue
