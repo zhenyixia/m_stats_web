@@ -2,17 +2,17 @@
   <div>
     <div style="float: left; width: 100%; height: 350px">
       <div style="position: relative; float: left; margin-bottom: 0px">
-         <el-button icon="el-icon-arrow-left" size="mini" type="primary" style="margin-left: 20px" :disabled="weekIndex <= -10" @click="preWeek()">上一周
+        <el-button icon="el-icon-arrow-left" size="mini" type="primary" style="margin-left: 20px" :disabled="weekIndex <= -10" @click="preWeek()">上一周
         </el-button>
         <span style="margin-left: 5px">{{ weekDayScopeInfo }}</span>
         <span style="margin-left: 5px">{{ totalTimes }}次</span>
         <span style="margin-left: 5px">{{ total }}公里</span>
-         <el-button type="primary" size="mini" style="margin-left: 5px" :disabled="weekIndex>=0" @click="nextWeek()">
+        <el-button type="primary" size="mini" style="margin-left: 5px" :disabled="weekIndex>=0" @click="nextWeek()">
           下一周
           <i class="el-icon-arrow-right el-icon--right"></i>
         </el-button>
       </div>
-      <div  id="weekCountId" style="position: relative;float: left; width: 100%; height: 100%; margin-top: -5px"></div>
+      <div id="weekCountId" style="position: relative;float: left; width: 100%; height: 100%; margin-top: -5px"></div>
       <!-- <div style="position: relative;float: left; margin-top: -100px">
         <el-button icon="el-icon-arrow-left" size="mini" type="primary" style="margin-left: 30px" :disabled="weekIndex <= -10" @click="preWeek()">上一周
         </el-button>

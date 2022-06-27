@@ -2,18 +2,18 @@
   <div>
     <div style="float:left;width:100%; height:350px;">
       <div style="position:relative;float:left;margin-bottom:0px;">
-         <el-button icon="el-icon-arrow-left" size="mini" type="primary" style="margin-left:30px;" :disabled="curYearMonth<=202101" @click="preMonth()">
+        <el-button icon="el-icon-arrow-left" size="mini" type="primary" style="margin-left:30px;" :disabled="curYearMonth<=202101" @click="preMonth()">
           前一月</el-button>
         <span style="margin-left:20px;">{{curYearMonthInfo}}</span>
         <span style="margin-left:25px;">{{totalTimes}}次</span>
         <span style="margin-left:25px;">{{total}}公里</span>
-         <el-button type="primary" size="mini" style="margin-left: 120px;" :disabled="curYearMonth >= realCurYearMonth" @click="nextMonth()">
+        <el-button type="primary" size="mini" style="margin-left: 120px;" :disabled="curYearMonth >= realCurYearMonth" @click="nextMonth()">
           后一月
           <i class="el-icon-arrow-right el-icon--right"></i>
         </el-button>
       </div>
-       <div id="monthCountId" style="float:left;width:100%;height:100%;margin-top:-5px;"></div>
-       <!--<div style="position: relative;float: left; margin-top: -100px">
+      <div id="monthCountId" style="float:left;width:100%;height:100%;margin-top:-5px;"></div>
+      <!--<div style="position: relative;float: left; margin-top: -100px">
        
        
       </div> -->

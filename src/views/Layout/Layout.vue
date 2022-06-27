@@ -2,8 +2,9 @@
 
   <el-container style="height: 100%; border: 1px solid #eee">
     <el-header style="text-align: right; font-size: 12px;height:5px;">
-      <el-button v-show="displaySwitchButton" @click="switchView()" type="text" icon="el-icon-setting"
-        style="height:5px;float: right;position: relative">{{switchText}} </el-button>
+      <el-button v-show="displaySwitchButton" @click="switchView()" type="text" icon="el-icon-setting" style="height:5px;float: right;position: relative">
+        {{switchText}}
+      </el-button>
     </el-header>
 
     <el-container style="height: 100%;">
@@ -85,15 +86,17 @@ export default {
         if (res && res.data && res.data.menus) {
           this.allMenus = res.data.menus.filter((item) => fixMenu != item);
           this.menuSubMenus = res.data.allMenuObjects;
-          this.menuSubMenus["运动统计"] = this.menuSubMenus["运动统计"].filter(
-            (item) => item["name"] != runStat
-          );
+          if (this.menuSubMenus["运动统计"]) {
+            this.menuSubMenus["运动统计"] = this.menuSubMenus[
+              "运动统计"
+            ].filter((item) => item["name"] != runStat);
+          }
         }
       });
     },
     switchView() {
       this.$root.isDetailView = !this.$root.isDetailView;
-      MiddleUtil.$emit('getExistsMenus');
+      MiddleUtil.$emit("getExistsMenus");
     },
   },
   created() {
