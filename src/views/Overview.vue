@@ -44,7 +44,8 @@ export default {
 
   methods: {
     getExistsMenus() {
-      getLatestSubMenus(this.$root.isDetailView).then((res) => {
+      let isDetailView = !!this.$root.isDetailView;
+      getLatestSubMenus(isDetailView).then((res) => {
         if (res && res.data && res.data.subMenus) {
           let subMenus = res.data.subMenus;
 

@@ -72,8 +72,7 @@ export default {
     return {
       openedMenus: ["1", "2", "3"],
       allMenus: [],
-      menus: [],
-      menuSubMenus: {},
+      menuSubMenus: {}, // 菜单子菜单 {学习统计: [{name: "长期目标", id: "1"}, {name: "中期目标", id: "2"}, {name: "短期目标", id: "3"}]}
       switchText: "切换视图",
       displaySwitchButton: false,
     };
@@ -83,9 +82,11 @@ export default {
       let fixMenu = "运动统计";
       let runStat = "跑步统计";
       getExistsMenus().then((res) => {
-        if (res && res.data && res.data.menus) {
+        if (res && res.data && res.data.menus) {  // "menus": ["学习统计"],
           this.allMenus = res.data.menus.filter((item) => fixMenu != item);
           this.menuSubMenus = res.data.allMenuObjects;
+
+          // 把从数据库中查询出的 “跑步统计” 过滤掉，因为已经写死在页面上了
           if (this.menuSubMenus["运动统计"]) {
             this.menuSubMenus["运动统计"] = this.menuSubMenus[
               "运动统计"
@@ -95,7 +96,9 @@ export default {
       });
     },
     switchView() {
+      // this.$root 是取vue的根组件，this.$parent是上一层组件。这里用this.$root相当于使用了一个全局变量
       this.$root.isDetailView = !this.$root.isDetailView;
+      // $emit 有两种用法，一是触发父组件的自定义事件，一是触发自定义事件，这里是第二种用法。自定义事件 在Overview.vue中的： MiddleUtil.$on("getExistsMenus", () => {
       MiddleUtil.$emit("getExistsMenus");
     },
   },

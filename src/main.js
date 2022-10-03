@@ -22,6 +22,13 @@ echarts.registerMap('world',world);
 new Vue({
   el: '#app',
   router,
+  data: function(){
+    return {
+      // 定义全局可读写变量
+      isDetailView: true, // 默认视图为详细视图，切换视图为二级菜单视图
+    }
+},
+
   components: { App },
   template: '<App/>'
 })
